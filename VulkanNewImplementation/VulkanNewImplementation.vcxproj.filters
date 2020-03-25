@@ -27,9 +27,15 @@
     <ClCompile Include="VulkanApiValidationLayers.cpp">
       <Filter>Source Files\VulkanApi</Filter>
     </ClCompile>
+    <ClCompile Include="VulkanApiHelpers.cpp">
+      <Filter>Source Files\VulkanApi</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VulkanApi.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanApiHelpers.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

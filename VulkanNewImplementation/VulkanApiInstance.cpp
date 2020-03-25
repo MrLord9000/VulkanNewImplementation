@@ -24,22 +24,28 @@ void VulkanApi::createInstance()
 	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	createInfo.pApplicationInfo = &appInfo;
 
-	// Extensions from glfw
-	uint32_t glfwExtensionCount = 0;
-	const char** glfwExtensions;
+	// Required extensions
+	auto extensions = getRequiredExtensions();
 
-	glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
-	// TODO: Wrote by myself, can break
-	if (!checkRequiredExtensionsAvailability(glfwExtensions, glfwExtensionCount))
-	{
-		throw std::runtime_error("You don't have the required extensions");
-	}
-
-	createInfo.enabledExtensionCount = glfwExtensionCount;
-	createInfo.ppEnabledExtensionNames = glfwExtensions;
+	createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+	createInfo.ppEnabledExtensionNames = extensions.data();
 	
-	createInfo.enabledLayerCount = 0;
+	VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo; // For debugging the instance creation
+	if (enableValidationLayers)
+	{
+		createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+		createInfo.ppEnabledLayerNames = validationLayers.data();
+
+		populateDebugMessengerCreateInfo(debugCreateInfo); // Get debug create info specified in VulkanApiValidationLayers.cpp
+		createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo; // pNext is used to create debug messenger during instance creation
+																				  // It will automatically be used during vkCreateInstance and vkDestroyInstance and cleaned up after that
+	}
+	else
+	{
+		createInfo.enabledLayerCount = 0;
+
+		createInfo.pNext = nullptr;
+	}
 
 	if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS)
 	{
@@ -80,4 +86,25 @@ bool VulkanApi::checkRequiredExtensionsAvailability(const char** requiredExtensi
 	}
 
 	return true;
+}
+
+std::vector<const char*> VulkanApi::getRequiredExtensions()
+{
+	uint32_t glfwExtensionCount = 0;
+	const char** glfwExtensions;
+	glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+	std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+
+	if (enableValidationLayers)
+	{
+		extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+	}
+
+	if (!checkRequiredExtensionsAvailability(glfwExtensions, glfwExtensionCount))
+	{
+		throw std::runtime_error("You don't have the required extensions");
+	}
+
+	return extensions;
 }
