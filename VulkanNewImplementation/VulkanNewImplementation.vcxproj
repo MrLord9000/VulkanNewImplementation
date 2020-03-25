@@ -140,6 +140,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="VulkanApiHelpers.cpp" />
     <ClCompile Include="VulkanApiInstance.cpp" />
+    <ClCompile Include="VulkanApiLogicalDevice.cpp" />
+    <ClCompile Include="VulkanApiPhysicalDevice.cpp" />
     <ClCompile Include="VulkanApiValidationLayers.cpp" />
   </ItemGroup>
   <ItemGroup>

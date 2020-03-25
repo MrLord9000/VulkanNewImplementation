@@ -1,4 +1,4 @@
-#include "VulkanApi.hpp"
+#include "VulkanApiHelpers.hpp"
 
 // Responsible for getting the address of vkCreateDebugUtilsMessenger
 VkResult CreateDebugUtilsMessengerEXT(

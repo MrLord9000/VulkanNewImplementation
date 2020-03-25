@@ -30,6 +30,12 @@
     <ClCompile Include="VulkanApiHelpers.cpp">
       <Filter>Source Files\VulkanApi</Filter>
     </ClCompile>
+    <ClCompile Include="VulkanApiPhysicalDevice.cpp">
+      <Filter>Source Files\VulkanApi</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanApiLogicalDevice.cpp">
+      <Filter>Source Files\VulkanApi</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VulkanApi.hpp">

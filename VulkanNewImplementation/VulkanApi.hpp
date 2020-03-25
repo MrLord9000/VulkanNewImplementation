@@ -10,22 +10,12 @@
 #include <cstdlib>
 #include <vector>
 #include <cstring>
+#include <optional>
 
-//#include "VulkanApiHelpers.hpp"
+#include "VulkanApiHelpers.hpp"
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
-
-VkResult CreateDebugUtilsMessengerEXT(
-	VkInstance instance,
-	const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-	const VkAllocationCallbacks* pAllocator,
-	VkDebugUtilsMessengerEXT* pDebugMessenger);
-
-void DestroyDebugUtilsMessengerEXT(
-	VkInstance instance,
-	VkDebugUtilsMessengerEXT debugMessenger,
-	const VkAllocationCallbacks* pAllocator);
 
 // ===== Validation layers list =========================================
 const std::vector<const char*> validationLayers = {
@@ -39,7 +29,15 @@ const std::vector<const char*> validationLayers = {
 	const bool enableValidationLayers = true;
 #endif
 
+// ===== Queue faliy indices structure =====
+struct QueueFamilyIndices {
+	std::optional<uint32_t> graphicsFamily;
 
+	bool isComplete()
+	{
+		return graphicsFamily.has_value();
+	}
+};
 
 class VulkanApi 
 {
@@ -65,6 +63,8 @@ private:
 	{
 		createInstance();
 		setupDebugMessenger();
+		pickPhysicalDevice();
+		createLogicalDevice();
 	}
 
 	void mainLoop() 
@@ -77,6 +77,8 @@ private:
 
 	void cleanup() 
 	{
+		vkDestroyDevice(device, nullptr);
+
 		if (enableValidationLayers)
 		{
 			// Destroy messenger function from VulkanApiHelpers.hpp
@@ -93,6 +95,9 @@ private:
 	GLFWwindow* window;
 	VkInstance instance;
 	VkDebugUtilsMessengerEXT debugMessenger;
+	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE; // No need to destroy it in the cleanup
+	VkDevice device;
+	VkQueue graphicsQueue; // Destroyed by device
 
 	// ===== Member function prototypes =====
 	// VulkanApiInstance.cpp
@@ -108,6 +113,12 @@ private:
 			void* pUserData); 
 		void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 		void setupDebugMessenger();
+	// VulkanApiPhysicalDevice.cpp
+		void pickPhysicalDevice();
+		bool isDeviceSuitable(VkPhysicalDevice device);
+		QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+	// VulkanApiLogicalDevice.cpp
+		void createLogicalDevice();
 };
 
 #endif // !VULKAN_API
